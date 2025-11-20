@@ -1,3 +1,4 @@
+import random
 import pygame
 from circleshape import CircleShape
 from constants import *
@@ -45,11 +46,61 @@ class Player(CircleShape):
         rotated_with_speed_vector = rotated_vector * PLAYER_SPEED * dt
         self.position += rotated_with_speed_vector
 
-    def shoot(self):
-        if  self.shot_cooldown_timer > 0:
-            return
-        else:
-            shot = Shot(self.position.x, self.position.y)
-            shot.velocity = pygame.Vector2(0,1).rotate(self.rotation) * PLAYER_SHOT_SPEED
-            self.shot_cooldown_timer = PLAYER_SHOOT_COOLDOWN_SECONDS
+    # Original:
+    # def shoot(self):
+        # if  self.shot_cooldown_timer > 0:
+            # return
+        # else:
+            # shot = Shot(self.position.x, self.position.y)
+            # shot.velocity = pygame.Vector2(0,1).rotate(self.rotation) * PLAYER_SHOT_SPEED
+            # self.shot_cooldown_timer = PLAYER_SHOOT_COOLDOWN_SECONDS
 
+    # Random shot direction and speed
+    # def shoot(self):
+        # if self.shot_cooldown_timer > 0:
+            # return
+
+        # Base direction the player is facing
+        # direction = pygame.Vector2(0, 1).rotate(self.rotation)
+
+        # 1. Add a small random spread (e.g. ±5 degrees)
+        # spread = random.uniform(-5, 5)
+        # direction = direction.rotate(spread)
+
+        # 2. Randomize speed a bit around PLAYER_SHOT_SPEED
+        # speed = random.uniform(0.9 * PLAYER_SHOT_SPEED, 1.1 * PLAYER_SHOT_SPEED)
+
+        # shot = Shot(self.position.x, self.position.y)
+        # shot.velocity = direction * speed
+
+        # self.shot_cooldown_timer = PLAYER_SHOOT_COOLDOWN_SECONDS
+
+    # shotgun approach
+    def shoot(self):
+        if self.shot_cooldown_timer > 0:
+            return
+
+        # Center direction (where the player is facing)
+        base_direction = pygame.Vector2(0, 1).rotate(self.rotation)
+
+        # How many shots and how wide the arc (in degrees)
+        num_shots = 3   # vary this for more shots
+        total_spread = 20  # total angle covered by the arc (e.g. -10, 0, +10), experiment with dif values
+
+        if num_shots == 1:
+            angles = [0]
+        else:
+            step = total_spread / (num_shots - 1)
+            # e.g. for 3 shots and 20° spread: [-10, 0, 10]
+            angles = [(-total_spread / 2) + i * step for i in range(num_shots)]
+
+        for angle in angles:
+            direction = base_direction.rotate(angle)
+
+            # Optional: slight per-shot speed variation
+            speed = random.uniform(0.9 * PLAYER_SHOT_SPEED, 1.1 * PLAYER_SHOT_SPEED)
+
+            shot = Shot(self.position.x, self.position.y)
+            shot.velocity = direction * speed
+
+        self.shot_cooldown_timer = PLAYER_SHOOT_COOLDOWN_SECONDS

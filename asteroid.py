@@ -28,10 +28,10 @@ class Asteroid(CircleShape):
         # Experiment: two independent random angles
         # angle1 = random.uniform(-50, 50)
         # angle2 = random.uniform(-50, 50)
-
         # direction1 = self.velocity.rotate(angle1)
         # direction2 = self.velocity.rotate(angle2)
-        # new_radius = self.radius - ASTEROID_MIN_RADIUS
+
+        new_radius = self.radius - ASTEROID_MIN_RADIUS
 
         new_asteroid1 = Asteroid(self.position.x, self.position.y, new_radius)
         new_asteroid2 = Asteroid(self.position.x, self.position.y, new_radius)
